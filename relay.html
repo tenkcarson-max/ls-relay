@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>relay</title>
+<style>html,body{margin:0;width:100%;height:100%;background:#000;overflow:hidden}#p,iframe{width:100%;height:100%;border:0}</style>
+</head>
+<body>
+<div id="p"></div>
+<script>
+/* Served by the loadingscreen resource over the server's own web address, so YouTube sees a
+   real origin. The loading screen drives this player with postMessage (see app.js RelayPlayer). */
+(function () {
+  var player = null, timer = null;
+  function send(type, data) { window.parent.postMessage({ lsRelay: true, type: type, data: data }, '*'); }
+  function status() {
+    if (!player || !player.getPlayerState) return;
+    var v = player.getVideoData ? player.getVideoData() : null;
+    send('status', { t: player.getCurrentTime(), d: player.getDuration(), s: player.getPlayerState(),
+      v: v ? { title: v.title, author: v.author, video_id: v.video_id } : null });
+  }
+  window.onYouTubeIframeAPIReady = function () { send('api'); };
+  window.addEventListener('message', function (e) {
+    if (e.source !== window.parent) return;
+    var m = e.data;
+    if (!m || !m.lsRelayCmd) return;
+    var args = m.args || [];
+    if (m.lsRelayCmd === 'create') {
+      if (player) return;
+      var vars = args[1] || {};
+      vars.origin = location.origin;
+      player = new YT.Player('p', {
+        width: '100%', height: '100%', videoId: args[0], playerVars: vars,
+        events: {
+          onReady: function () { send('ready'); timer = setInterval(status, 250); },
+          onStateChange: function (ev) { send('state', ev.data); status(); },
+          onError: function (ev) { send('error', ev.data); },
+          onAutoplayBlocked: function () { send('autoplayBlocked'); }
+        }
+      });
+      return;
+    }
+    if (!player || typeof player[m.lsRelayCmd] !== 'function') return;
+    try { player[m.lsRelayCmd].apply(player, args); } catch (err) {}
+    status();
+  });
+})();
+</script>
+<script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html>
