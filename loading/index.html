@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- YouTube refuses embeds that send no referrer (error 153). Keep this. -->
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Palm Heights</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=block" rel="stylesheet">
+  <link rel="preload" href="logo.webp" as="image" fetchpriority="high">
+  <link rel="stylesheet" href="theme.css?v=3">
+  <link rel="stylesheet" href="style.css?v=3">
+</head>
+<body>
+
+  <!-- Base layer: animated black/blue gradient. Visible while a video loads and as the fallback. -->
+  <div class="bg-fx" aria-hidden="true">
+    <div class="bg-fx__orb bg-fx__orb--a"></div>
+    <div class="bg-fx__orb bg-fx__orb--b"></div>
+    <div class="bg-fx__orb bg-fx__orb--c"></div>
+    <div class="bg-fx__sheen"></div>
+  </div>
+
+  <!-- Music video, full screen (cover). Never receives the mouse. -->
+  <div class="bg-video" id="bgVideo" aria-hidden="true">
+    <div id="ytPlayer"></div>
+  </div>
+
+  <!-- Readability overlays: bottom + left gradients, soft top edge, vignette, grain. -->
+  <div class="bg-shade" aria-hidden="true"></div>
+
+  <main class="ui" id="ui">
+
+    <div class="mark" id="mark" aria-hidden="true">
+      <span class="mark__glow"></span>
+      <img class="mark__img" id="markImg" src="logo.webp" alt="" draggable="false" fetchpriority="high">
+      <span class="mark__sheen"></span>
+    </div>
+
+    <header class="brand" id="brand" hidden>
+      <h1 class="brand__name silver-text" id="brandName"></h1>
+      <p class="brand__tag" id="brandTag"></p>
+    </header>
+
+    <aside class="team panel" id="team" aria-label="Server team" hidden></aside>
+
+    <section class="load" id="load" aria-label="Loading progress">
+      <div class="load__label"><span class="load__dot"></span><span id="loadLabel">Loading</span></div>
+      <div class="load__pct silver-text"><span id="loadPct">0</span><span class="load__sym">%</span></div>
+      <div class="load__bar"><div class="load__fill" id="loadFill"></div></div>
+      <div class="load__status" id="loadStatus">Preparing</div>
+    </section>
+
+    <div class="dock" id="dock">
+      <button type="button" class="sound-hint" id="soundHint" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path class="i-fill" d="M4 9.2h3.1L11.3 5.6c.5-.4 1.2-.1 1.2.6v11.6c0 .7-.7 1-1.2.6l-4.2-3.6H4a1 1 0 0 1-1-1V10.2a1 1 0 0 1 1-1z"/>
+          <path class="i-stroke" d="M16.5 9.5l5 5M21.5 9.5l-5 5"/>
+        </svg>
+        <span>Click to enable sound</span>
+      </button>
+
+      <div class="music-off" id="musicOff"></div>
+      <section class="player" id="player" aria-label="Music player">
+        <div class="player__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+
+        <div class="player__meta">
+          <div class="player__title" id="trkTitle">&nbsp;</div>
+          <div class="player__artist" id="trkArtist">&nbsp;</div>
+          <div class="player__prog"><div class="player__prog-fill" id="trkProg"></div></div>
+        </div>
+
+        <div class="player__sep" aria-hidden="true"></div>
+
+        <div class="player__ctrls">
+          <button type="button" class="pbtn" id="btnPrev" aria-label="Previous track" title="Previous (Left arrow)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect class="i-fill" x="5" y="5.5" width="2.4" height="13" rx="1.1"/><path class="i-fill" d="M18.6 6.4v11.2a1 1 0 0 1-1.56.83L9.3 13.24a1.5 1.5 0 0 1 0-2.48l7.74-5.2a1 1 0 0 1 1.56.84z"/></svg>
+          </button>
+          <button type="button" class="pbtn pbtn--main" id="btnPlay" aria-label="Pause" title="Play / Pause (Space)">
+            <svg class="ic-pause" viewBox="0 0 24 24" aria-hidden="true"><rect class="i-fill" x="6.6" y="5.2" width="3.8" height="13.6" rx="1.2"/><rect class="i-fill" x="13.6" y="5.2" width="3.8" height="13.6" rx="1.2"/></svg>
+            <svg class="ic-play" viewBox="0 0 24 24" aria-hidden="true"><path class="i-fill" d="M8.2 6.1v11.8a1.1 1.1 0 0 0 1.68.93l9.3-5.9a1.1 1.1 0 0 0 0-1.86l-9.3-5.9A1.1 1.1 0 0 0 8.2 6.1z"/></svg>
+          </button>
+          <button type="button" class="pbtn" id="btnNext" aria-label="Next track" title="Next (Right arrow)">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect class="i-fill" x="16.6" y="5.5" width="2.4" height="13" rx="1.1"/><path class="i-fill" d="M5.4 6.4v11.2a1 1 0 0 0 1.56.83l7.74-5.19a1.5 1.5 0 0 0 0-2.48L6.96 5.56A1 1 0 0 0 5.4 6.4z"/></svg>
+          </button>
+        </div>
+
+        <div class="player__sep" aria-hidden="true"></div>
+
+        <div class="player__vol">
+          <button type="button" class="pbtn pbtn--vol" id="btnMute" aria-label="Mute" title="Mute (M)" data-level="2">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path class="i-fill" d="M3.5 9.2h3.1l4.2-3.6c.5-.4 1.2-.1 1.2.6v11.6c0 .7-.7 1-1.2.6l-4.2-3.6H3.5a1 1 0 0 1-1-1V10.2a1 1 0 0 1 1-1z"/>
+              <path class="i-stroke vw1" d="M15.2 9.3a3.8 3.8 0 0 1 0 5.4"/>
+              <path class="i-stroke vw2" d="M17.9 6.6a7.6 7.6 0 0 1 0 10.8"/>
+              <path class="i-stroke vx" d="M15.8 9.6l4.8 4.8M20.6 9.6l-4.8 4.8"/>
+            </svg>
+          </button>
+          <input type="range" class="vol" id="volRange" min="0" max="100" step="1" value="35" aria-label="Volume">
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <script src="config.js?v=3"></script>
+  <script src="app.js?v=3"></script>
+</body>
+</html>

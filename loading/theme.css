@@ -1,0 +1,66 @@
+/* ==========================================================================
+   PALM HEIGHTS DESIGN SYSTEM - black, chrome silver, electric blue glow
+   Shared tokens copied into every custom UI so they all look identical.
+   ========================================================================== */
+
+/* Palm Heights - fonts come from Google Fonts (index.html): Inter for text, Cinzel for titles */
+
+:root {
+  /* surfaces (near-black, slightly cool) */
+  --bg-0: #050608;
+  --bg-panel: rgba(8, 9, 12, 0.86);
+  --bg-raised: rgba(20, 22, 27, 0.92);
+  --bg-hover: rgba(30, 34, 41, 0.95);
+  --bg-track: rgba(255, 255, 255, 0.07);
+
+  /* silver text scale */
+  --silver-1: #F9FAFB;
+  --silver-2: #CFCFD3;
+  --silver-3: #A0A2A7;
+  --silver-4: #6A6C73;
+
+  /* lines */
+  --line: rgba(255, 255, 255, 0.07);
+  --line-strong: rgba(255, 255, 255, 0.14);
+
+  /* blue accent + glow */
+  --blue: #0A84F8;
+  --blue-bright: #48A6FF;
+  --blue-deep: #064EA4;
+  --blue-line: rgba(10, 132, 248, 0.55);
+  --blue-soft: rgba(10, 132, 248, 0.14);
+  --glow: 0 0 0 1px rgba(10, 132, 248, 0.45), 0 0 18px rgba(10, 132, 248, 0.22);
+  --glow-strong: 0 0 0 1px rgba(10, 132, 248, 0.7), 0 0 24px rgba(10, 132, 248, 0.4);
+  --panel-shadow: 0 12px 40px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  /* states */
+  --red: #ff4d5e;
+  --amber: #ffb547;
+  --green: #3ddc97;
+
+  /* metal */
+  --silver-text: linear-gradient(180deg, #ffffff 0%, #E6E8EB 50%, #8C8F96 100%);
+  --silver-edge: linear-gradient(135deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.04) 45%, rgba(255, 255, 255, 0.18));
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --font: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --display: 'Cinzel', 'Trajan Pro', serif;
+  --chrome: linear-gradient(180deg, #ffffff 0%, #eef0f3 32%, #a0a2a7 58%, #e6e8eb 76%, #8c8f96 100%);
+}
+
+/* silver metallic text */
+.silver-text {
+  background: var(--silver-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* standard glass panel with blue outline glow */
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--blue-line);
+  border-radius: var(--radius);
+  box-shadow: var(--panel-shadow), 0 0 18px rgba(10, 132, 248, 0.16);
+}
